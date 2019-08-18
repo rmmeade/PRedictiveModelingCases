@@ -1,6 +1,6 @@
 ---
 title: "Authorship Prediction"
-output: html_document
+output: github_document
 ---
 
 ```{r setup, include=FALSE}
@@ -27,18 +27,7 @@ setwd("C:/Users/ckraw/OneDrive/Desktop/C50train")
 file.list = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
 trainFiles = lapply(file.list, readerPlain) 
 
-# Clean up the file names
-# This uses the piping operator from magrittr
-# See https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
-mynames = file.list %>%
-  { strsplit(., '/', fixed=TRUE) } %>%
-  { lapply(., tail, n=2) } %>%
-  { lapply(., paste0, collapse = '') } %>%
-  unlist
 
-# Rename the articles
-mynames
-names(trainFiles) = mynames
 
 ```
 
@@ -47,15 +36,6 @@ setwd("C:/Users/ckraw/OneDrive/Desktop/C50test")
 file.list1 = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
 testFiles = lapply(file.list1, readerPlain) 
 
-mynames1 = file.list1 %>%
-  { strsplit(., '/', fixed=TRUE) } %>%
-  { lapply(., tail, n=2) } %>%
-  { lapply(., paste0, collapse = '') } %>%
-  unlist
-
-# Rename the articles
-mynames1
-names(testFiles) = mynames1
 ```
 ```{r}
 ## once you have documents in a vector, you 
@@ -76,10 +56,9 @@ my_documents = tm_map(my_documents, content_transformer(removeWords), stopwords(
 
 ## create a doc-term-matrix
 DTM_train = DocumentTermMatrix(my_documents)
-## You can inspect its entries...
 DTM_train = removeSparseTerms(DTM_train, 0.95)
-train = as.matrix(DTM_train)
-
+tfidf_train = weightTfIdf(DTM_train)
+train = as.matrix(tfidf_train)
 ```
 
 ```{r}
@@ -102,15 +81,9 @@ my_documents1 = tm_map(my_documents1, content_transformer(removeWords), stopword
 ## create a doc-term-matrix
 DTM_test = DocumentTermMatrix(my_documents1)
 DTM_test = removeSparseTerms(DTM_test, 0.95)
-test = as.matrix(DTM_test)
-```
+tfidf_test = weightTfIdf(DTM_test)
+test = as.matrix(tfidf_test)
 
-```{r}
-#create unique id for each author
-#no longer using this code, but keeping for now just in case 
-
-#trainnames = str_extract(mynames,'(\\w{5})[^\\d+]')
-#testnames = str_extract(mynames1,'(\\w{5})[^\\d+]')
 ```
 
 ```{r}
