@@ -1,0 +1,156 @@
+---
+title: "Authorship Prediction"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+library(tm) 
+library(caret)
+library(magrittr)
+library(slam)
+library(proxy)
+library(stringr)
+library(randomForest)
+library(naivebayes)
+
+readerPlain = function(fname){
+  readPlain(elem=list(content=readLines(fname)), 
+            id=fname, language='en') }
+
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50train")
+```
+
+
+```{r}
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50train")
+file.list = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
+trainFiles = lapply(file.list, readerPlain) 
+
+# Clean up the file names
+# This uses the piping operator from magrittr
+# See https://cran.r-project.org/web/packages/magrittr/vignettes/magrittr.html
+mynames = file.list %>%
+  { strsplit(., '/', fixed=TRUE) } %>%
+  { lapply(., tail, n=2) } %>%
+  { lapply(., paste0, collapse = '') } %>%
+  unlist
+
+# Rename the articles
+mynames
+names(trainFiles) = mynames
+
+```
+
+```{r}
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50test")
+file.list1 = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
+testFiles = lapply(file.list1, readerPlain) 
+
+mynames1 = file.list1 %>%
+  { strsplit(., '/', fixed=TRUE) } %>%
+  { lapply(., tail, n=2) } %>%
+  { lapply(., paste0, collapse = '') } %>%
+  unlist
+
+# Rename the articles
+mynames1
+names(testFiles) = mynames1
+```
+```{r}
+## once you have documents in a vector, you 
+## create a text mining 'corpus' with: 
+documents_raw = Corpus(VectorSource(trainFiles))
+
+## Some pre-processing/tokenization steps.
+## tm_map just maps some function to every document in the corpus
+my_documents = documents_raw
+my_documents = tm_map(my_documents, content_transformer(tolower)) # make everything lowercase
+my_documents = tm_map(my_documents, content_transformer(removeNumbers)) # remove numbers
+my_documents = tm_map(my_documents, content_transformer(removePunctuation)) # remove punctuation
+my_documents = tm_map(my_documents, content_transformer(stripWhitespace)) ## remove excess white-space
+
+## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
+my_documents = tm_map(my_documents, content_transformer(removeWords), stopwords("en"))
+
+
+## create a doc-term-matrix
+DTM_train = DocumentTermMatrix(my_documents)
+## You can inspect its entries...
+DTM_train = removeSparseTerms(DTM_train, 0.95)
+train = as.matrix(DTM_train)
+
+```
+
+```{r}
+## once you have documents in a vector, you 
+## create a text mining 'corpus' with: 
+documents_raw1 = Corpus(VectorSource(testFiles))
+
+## Some pre-processing/tokenization steps.
+## tm_map just maps some function to every document in the corpus
+my_documents1 = documents_raw1
+my_documents1 = tm_map(my_documents1, content_transformer(tolower)) # make everything lowercase
+my_documents1 = tm_map(my_documents1, content_transformer(removeNumbers)) # remove numbers
+my_documents1 = tm_map(my_documents1, content_transformer(removePunctuation)) # remove punctuation
+my_documents1 = tm_map(my_documents1, content_transformer(stripWhitespace)) ## remove excess white-space
+
+## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
+my_documents1 = tm_map(my_documents1, content_transformer(removeWords), stopwords("en"))
+
+
+## create a doc-term-matrix
+DTM_test = DocumentTermMatrix(my_documents1)
+DTM_test = removeSparseTerms(DTM_test, 0.95)
+test = as.matrix(DTM_test)
+```
+
+```{r}
+#create unique id for each author
+#no longer using this code, but keeping for now just in case 
+
+#trainnames = str_extract(mynames,'(\\w{5})[^\\d+]')
+#testnames = str_extract(mynames1,'(\\w{5})[^\\d+]')
+```
+
+```{r}
+#make train and test dfs 
+train = as.data.frame(train)
+test = as.data.frame(test)
+```
+
+```{r}
+#add author id to author columns in test and train. change the column to a factor for classification
+
+ for (i in 1:50) {
+      author_start = 50*(i-1) + 1
+      author_last = (50*i)
+      
+      train$author[author_start:author_last] = i
+      test$author[author_start:author_last] = i
+    }
+
+train$author = as.factor(train$author)
+test$author = as.factor(test$author)
+```
+
+```{r}
+#create train and test matricies.
+
+X_Train = as.matrix(train[,names(train)!='author'])
+Y_Train = as.factor(train$author)
+X_Test = as.matrix(test[,names(test)!='author'])
+Y_Test = test$author
+```
+```{r}
+naive.fit = naive_bayes(X_Train,Y_Train)
+
+```
+```{r}
+naive_predict=predict(naive.fit,X_Test,type='class')
+```
+```{r}
+##Confusion matrix to check accuracy
+xtab = table(naive_predict,Y_Test)
+confusionMatrix(xtab)
+```
