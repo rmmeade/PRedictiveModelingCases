@@ -76,7 +76,7 @@ green = cbind(green,class_type)
 
 
 ```
-```{r, include = FALSE}
+```{r, echo = FALSE}
 
 
 rel_freq <- ggplot(green, aes(class_type, group = green_rating)) + 
@@ -107,7 +107,7 @@ Green buildings could generate higher rents overall not because they are green, 
 
 When the effects of building class and green vs. non-green are separated, the conclusion that green buildings generate higher rents is unsupported. 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 green %>%
 group_by(class_type, green_rating) %>%
 summarise(AverageRent = mean(Rent)) %>%
@@ -125,7 +125,7 @@ The above graph demonstrates that when separated by class, only Class C green bu
 
 A multiple regression provides additional evidence to further separate the effects of Building Class and Green status. As demonstrated by the coefficients below, a Class A generates the greatest rent premiums, followed by Class B buildings. Green buildings actually have a negative relationship to price (although the statistical significance is less certain than building class). This would suggest that green buildings typically have lower rents than their non-green peers. 
 
-```{r, include=FALSE}
+```{r, echo=FALSE}
 reg = lm(Rent~class_a+class_b+green_rating, green )
 summary(reg)
 
