@@ -1,0 +1,62 @@
+---
+title: "Assoc. Rules Markdown"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load libraries}
+library(tidyverse)
+library(arules)
+library(arulesViz)
+```
+
+```{r load data}
+#Read in data as transactions class
+groc = read.transactions("groceries.txt", format="basket", sep= ",")
+summary(groc)
+#plot item frequency dist
+itemFrequencyPlot(groc, topN = 15)
+```
+
+The final thresholds we selected were support=.005, confidence=.2, and maxlen=5. These were selected by trying out various combinations of the three and inspecting the results (code not included). We selected our final thresholds due to the reasonable amount of rules produced (873) compared to other combos that produced upwards of 1500 rules. Subsets of 873 rules also produced actionable insights for a grocer. 
+```{r final rule}
+rules_three = apriori(groc, parameter=list(support=.005, confidence=.2, maxlen=5))
+summary(rules_three)
+cat("Number of Rules",length(rules_three)) #873 rules
+inspect(subset(rules_three, subset=lift > 3)) #65 rules; good variety
+inspect(subset(rules_three, subset=confidence > 0.5)) #100ish rules
+inspect(subset(rules_three, confidence > 0.3 & lift >3)) #39 rules; root vegetables
+```
+
+```{r plot rule}
+plot(rules_three)
+```
+
+```{r plot as graph}
+plot(head(rules_three, 20, by='lift'), method='graph')
+```
+
+```{r inspect item rules}
+milkrules <- subset(rules_three, rhs %pin% "whole milk")
+inspect(milkrules) #229 rules
+
+tropfruitrules <- subset(rules_three, rhs %pin% "tropical fruit")
+inspect(tropfruitrules) #52 rules
+
+sausagerules <- subset(rules_three, rhs %pin% "sausage")
+inspect(sausagerules) #12 rules - odd rules
+```
+
+As expected, the most prominent rule emerging from the grocery baskets was butter and yogurt -> whole milk with a confidence of 64%. However, in total there were 229 rules pointing to whole milk because it is such a popular grocery item. In comparison, the 12 rules for sausage were quite interesting. Pairings leading to sausage with confidence around 20% included root vegetables and yogurt, other vegetables and shopping bags, and soda and yogurt. These items are pretty unintuitive when it comes to sausage trends. In addition, it was surprising to see that hamburger meat was not largely intertwined in the network. 
+
+```{r save graph for gephi input}
+saveAsGraph(head(rules_three, n = 1000, by = "lift"), file = "groceryrules_three.graphml")
+```
+
+The graph output from gephi shows the network of grocery items with nodes with degree less than 3 filtered out. The nodes and edges are partitioned (and colored) by confidence.
+
+
