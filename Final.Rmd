@@ -74,7 +74,7 @@ green = cbind(green,class_type)
 
 
 ```
-```{r, echo = FALSE}
+```{r,echo=FALSE}
 
 
 rel_freq <- ggplot(green, aes(class_type, group = green_rating)) + 
@@ -105,7 +105,7 @@ Green buildings could generate higher rents overall not because they are green, 
 
 When the effects of building class and green vs. non-green are separated, the conclusion that green buildings generate higher rents is unsupported. 
 
-```{r, echo=FALSE}
+```{r,echo=FALSE}
 green %>%
 group_by(class_type, green_rating) %>%
 summarise(AverageRent = mean(Rent)) %>%
@@ -123,7 +123,7 @@ The above graph demonstrates that when separated by class, only Class C green bu
 
 A multiple regression provides additional evidence to further separate the effects of Building Class and Green status. As demonstrated by the coefficients below, a Class A generates the greatest rent premiums, followed by Class B buildings. Green buildings actually have a negative relationship to price (although the statistical significance is less certain than building class). This would suggest that green buildings typically have lower rents than their non-green peers. 
 
-```{r, echo=FALSE}
+```{r,echo=FALSE}
 reg = lm(Rent~class_a+class_b+green_rating, green )
 summary(reg)
 
@@ -650,7 +650,7 @@ itemFrequencyPlot(groc, topN = 15)
 ```
 
 The final thresholds we selected were support=.005, confidence=.2, and maxlen=5. These were selected by trying out various combinations of the three and inspecting the results (code not included). We selected our final thresholds due to the reasonable amount of rules produced (873) compared to other combos that produced upwards of 1500 rules. Subsets of 873 rules also produced actionable insights for a grocer. 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 rules_three = apriori(groc, parameter=list(support=.005, confidence=.2, maxlen=5))
 summary(rules_three)
 cat("Number of Rules",length(rules_three)) #873 rules
@@ -667,7 +667,7 @@ plot(rules_three)
 plot(head(rules_three, 20, by='lift'), method='graph')
 ```
 
-```{r, echo=FALSE}
+```{r, include=FALSE}
 milkrules <- subset(rules_three, rhs %pin% "whole milk")
 inspect(milkrules) #229 rules
 
