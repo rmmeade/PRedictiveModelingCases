@@ -2,9 +2,7 @@
 title: 'Predictive Modeling Part II: Case Studies'
 author: 'Rachel Meade, Ian Hatfield, Curtis Krawczyk, LaShay Fontenot'
 date: '8/19/2019'
-output:
-  md_document:
-    variant: gfm
+output: github_document
 always_allow_html: yes
 ---
 ```{r setup, include=FALSE}
@@ -688,5 +686,5 @@ saveAsGraph(head(rules_three, n = 1000, by = "lift"), file = "groceryrules_three
 
 The graph output from gephi shows the network of grocery items with nodes with degree less than 3 filtered out. The nodes and edges are partitioned (and colored) by confidence.
 
-![](Grocery_colorlabel.pdf)<!-- -->
+![](Grocery_colorlabel.png)<!-- -->
 
