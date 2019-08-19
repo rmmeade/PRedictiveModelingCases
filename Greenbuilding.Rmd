@@ -1,0 +1,114 @@
+---
+title: 'Visual Storytelling: Green Buildings'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+library(mosaic)
+library(dplyr)
+
+setwd("C:/Users/Ian Hatfield/Downloads/STA380-master/STA380-master/data")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+#loading in the data
+green = read.csv('../data/greenbuildings.csv')
+summary(green)
+
+#Cleaning low occupancy buildings
+green_clean = subset(green, leasing_rate > 10)
+
+#Separating data into green/non-green buildings
+green_only = subset(green_clean, green_rating==1)
+non_green = subset(green_clean, green_rating == 0) 
+
+
+
+```
+```{r}
+#Summary of green buildings
+summary(green_only)
+
+```
+```{r}
+#Summary of non-green buildings
+summary(non_green)
+
+```
+```{r}
+#Further separating into different class buildings for green buildings
+Aclass_green = subset(green_only, class_a == 1)
+Bclass_green = subset(green_only, class_b == 1)
+Cclass_green = subset(green_only, class_a == 0 & class_b == 0)
+
+#non-green buildings
+Aclass_ngreen = subset(non_green, class_a == 1)
+Bclass_ngreen = subset(non_green, class_b == 1)
+Cclass_ngreen = subset(non_green, class_a == 0 & class_b == 0)
+
+#creating column for class type
+
+
+class_type <- ifelse(green$class_a == 1, 'A', ifelse(green$class_b == 1, 'B', ifelse(green$class_a == 0 & green$class_b == 0, 'C', NA)))
+
+green = cbind(green,class_type)
+
+#mutate(green, class_type = ifelse(class_a == 1,
+ #                                 class_type = 'A',
+  #                                ifelse(class_b == 1, 
+   #                                      class_type = 'B',
+    #                                     ifelse(class_a == 0 & class_b == 0, 'C',))))
+
+```
+```{r echo = FALSE}
+
+
+rel_freq <- ggplot(green, aes(class_type, group = green_rating)) + 
+          geom_bar(aes(y = ..prop..,fill = factor(..x..)), stat="count") + 
+          scale_y_continuous(labels=scales::percent) +
+          labs(x = 'Class Type',
+          y = "Relative Frequencies",
+          title = 'Relative Frequency of Class Types by Green/Non-green',
+          caption="Source: greenbuilding data set in R") +
+          facet_grid(~green_rating, labeller = label_both)
+  
+rel_freq
+
+```
+The percentage of Class A green buildings is ~79.8%.
+The percentage of Class A non-green buildings is ~37%.
+The percentage of Class B green buildings is ~19.15%.
+The percentage of Class B non-green buildings is ~48.5%.
+The percentage of Class C green buildings is ~1%.
+The percentage of Class C non-green buildings is ~14.5%.
+
+
+```{r, echo=FALSE}
+green %>%
+group_by(class_type, green_rating) %>%
+summarise(AverageRent = mean(Rent)) %>%
+ ggplot(aes(factor(class_type), AverageRent, label=round(AverageRent, 2), fill=factor(green_rating))) +
+ geom_col(position = position_dodge(), color='black') +
+ scale_fill_manual(values=c('red','dark green')) +
+ geom_text(position=position_dodge(width = 0.9),vjust = -0.3) +
+ labs(title="Bar plot",
+      subtitle="Mean Rent by Class",
+      caption="Source: greenbuilding data set in R",
+      x="Class", y="Mean Rent ($USD/sq. ft)", fill="Green Rating")
+
+```
+
+
+
+```{r}
+reg = lm(Rent~class_a+class_b+green_rating, green )
+summary(reg)
+
+```
