@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## By: Rachel Meade, Ian Hatfield, Curtis Krawczyk, LaShay Fontenot
 
-```{r}
+```{r, include = FALSE}
 rm(list=ls())
 library(mosaic)
 library(dplyr)
@@ -29,7 +29,7 @@ Real estate investors and developers invest in green buildings, whether they are
 The previous analysis provided in the case study was flawed because it looked only at green versus non-green buildings in aggregate. It concluded that green buildings generated higher rents by comparing median price per square foot of green and non-green buildings. This analysis does not look at many other potential hidden variables that could account for the difference in price, other than green vs. non-green. 
 
 The graph below demonstrates that proportionally more green buildings are Class A than non-green buildings. 
-```{r}
+```{r, include=FALSE}
 #loading in the data
 green = read.csv('./data/greenbuildings.csv')
 summary(green)
@@ -45,18 +45,18 @@ non_green = subset(green_clean, green_rating == 0)
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #Summary of green buildings
 summary(green_only)
 
 ```
-```{r}
+```{r, include=FALSE}
 #Summary of non-green buildings
 summary(non_green)
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #Further separating into different class buildings for green buildings
 Aclass_green = subset(green_only, class_a == 1)
 Bclass_green = subset(green_only, class_b == 1)
@@ -88,14 +88,19 @@ rel_freq <- ggplot(green, aes(class_type, group = green_rating)) +
           caption="Source: greenbuilding data set in R") +
           facet_grid(~green_rating, labeller = label_both)
   
-rel_freq
+print(rel_freq)
 
 ```
 The percentage of Class A green buildings is ~79.8%.
+
 The percentage of Class A non-green buildings is ~37%.
+
 The percentage of Class B green buildings is ~19.15%.
+
 The percentage of Class B non-green buildings is ~48.5%.
+
 The percentage of Class C green buildings is ~1%.
+
 The percentage of Class C non-green buildings is ~14.5%.
 
 Green buildings could generate higher rents overall not because they are green, but because they are nicer buildings, on average. This analysis suggests that green buildings could generate higher rents on average because they are more likely to be Class A Buildings. 
@@ -120,7 +125,7 @@ The above graph demonstrates that when separated by class, only Class C green bu
 
 A multiple regression provides additional evidence to further separate the effects of Building Class and Green status. As demonstrated by the coefficients below, a Class A generates the greatest rent premiums, followed by Class B buildings. Green buildings actually have a negative relationship to price (although the statistical significance is less certain than building class). This would suggest that green buildings typically have lower rents than their non-green peers. 
 
-```{r}
+```{r, echo=FALSE}
 reg = lm(Rent~class_a+class_b+green_rating, green )
 summary(reg)
 
@@ -131,7 +136,7 @@ In conclusion, although there may still be moral and reputational benefits to in
 
 #Fligths at Austin-Bergstrom Airport
 
-```{r}
+```{r, include=FALSE}
 rm(list=ls())
 library(tidyverse)
 library(ggmap)
@@ -143,13 +148,13 @@ library(dplyr)
 library(scales)
 ```
 
-```{r}
+```{r, include=FALSE}
 data = read.csv("./data/ABIA.csv")
 codes = read.csv("./data/airport-codes.csv")
 attach(data)
 ```
 
-```{r}
+```{r, include=FALSE}
 #grab important info from codes file
 codes_crop = codes[,10:12]
 codes_crop = codes_crop[,c(1,3)]
@@ -172,7 +177,7 @@ data3 = separate(data3, origin_coord,c("origin_lat","origin_long"),
 The below plots are created by first subsetting the dataset to focus on flights departing from the Austin airport. These destinations are then plotted on a map of the US with the size of the marker reflecting the amount of flights to that location. Markers are then colored based on the average delay time of flights to those locations on a blue/red scale. This final plot could be helpful for Austinites that travel frequently and are curious about flight patterns for their destination.
 
 
-```{r}
+```{r, include=FALSE}
 #Subset data to Austin departures
 aus = data3[which(data3$Origin=="AUS"),]
 
@@ -242,7 +247,7 @@ We will assume that the portfolios are rebalanced each day at zero transaction c
 First, we prepare to run the Monte Carlo simulations by calling the necessary libraries, defining the ETFs we will use to build each portfolio, and import 5 years of historical returns that we will draw from in the simulations. 
 
 
-```{r}
+```{r, include=FALSE}
 rm(list=ls())
 library(mosaic)
 library(quantmod)
@@ -254,14 +259,14 @@ myprices = getSymbols(mystocks, from = "2014-08-15")
 ```
 Adjust all ETFs and create a new object adding 'a' to the end.
 
-```{r}
+```{r, include=FALSE}
 for(ticker in mystocks) {
   expr = paste0(ticker, "a = adjustOHLC(", ticker, ")")
   eval(parse(text=expr))
 }
 ```
 Combine all the returns in a matrix.
-```{r}
+```{r, include=FALSE}
 all_returns = cbind(	ClCl(EUSAa),
                      ClCl(VUGa),
                      ClCl(PGXa),
@@ -276,11 +281,11 @@ all_returns = cbind(	ClCl(EUSAa),
 all_returns = as.matrix(na.omit(all_returns))
 ```
 Compute the returns from the closing prices
-```{r}
+```{r, echo=FALSE}
 pairs(all_returns)
 ```
 Run the Monte Carlo simulations to demonstrate many different possible scenarios. 
-```{r}
+```{r, include=FALSE}
 initial_wealth = 100000
 sim1 = foreach(i=1:5000, .combine='rbind') %do% {
   total_wealth = initial_wealth
@@ -298,16 +303,16 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
 }
 ```
 Histogram of the ending wealth amounts generated by the simulations.
-```{r}
+```{r, echo=FALSE}
 hist(sim1[,n_days], 25)
 ```
 Profit/loss
-```{r}
+```{r, echo=FALSE}
 mean(sim1[,n_days])
 hist(sim1[,n_days]- initial_wealth, breaks=30)
 ```
 Calculate Value at Risk at the 5% level.
-```{r}
+```{r, echo=FALSE}
 temp = sim1[,n_days]- initial_wealth
 quantile(temp,p=0.05)
 ```
@@ -317,7 +322,7 @@ We repeat the above process twice more with different portfolios. Since we are u
 ```
 This portfolio focuses on the Tech Sector (30% weight on XLK - Technology Select Secotr SPDR Fund) and drop COmmodity Index Fund (USCI) & Bonds (BND). 
 
-```{r}
+```{r, echo=FALSE}
 initial_wealth = 100000
 sim1 = foreach(i=1:5000, .combine='rbind') %do% {
   total_wealth = initial_wealth
@@ -337,18 +342,18 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
 hist(sim1[,n_days], 25)
 ```
 Profit/loss
-```{r}
+```{r, echo = FALSE}
 mean(sim1[,n_days])
 hist(sim1[,n_days]- initial_wealth, breaks=30)
 ```
 5% Value at Risk
-```{r}
+```{r, echo=FALSE}
 temp = sim1[,n_days]- initial_wealth
 quantile(temp,p=0.05)
 ```
 
 Change weights to focus on Bonds, & Commodity Index and drop EUSA, VUG, SPY, XLK, and PGX
-```{r}
+```{r, echo=FALSE}
 initial_wealth = 100000
 sim1 = foreach(i=1:5000, .combine='rbind') %do% {
   total_wealth = initial_wealth
@@ -368,18 +373,18 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
 hist(sim1[,n_days], 25)
 ```
 Profit/loss
-```{r}
+```{r, echo=FALSE}
 mean(sim1[,n_days])
 hist(sim1[,n_days]- initial_wealth, breaks=30)
 ```
 5% Value at Risk
-```{r}
+```{r, echo=FALSE}
 temp = sim1[,n_days]- initial_wealth
 quantile(temp,p=0.05)
 ```
 
 Finally, we try to make a poorly diversified portfolio, leaving only Commodities, Tech, and Insider Sentiment. 
-```{r}
+```{r, echo=FALSE}
 initial_wealth = 100000
 sim1 = foreach(i=1:5000, .combine='rbind') %do% {
   total_wealth = initial_wealth
@@ -399,12 +404,12 @@ sim1 = foreach(i=1:5000, .combine='rbind') %do% {
 hist(sim1[,n_days], 25)
 ```
 Profit/loss
-```{r}
+```{r, echo=FALSE}
 mean(sim1[,n_days])
 hist(sim1[,n_days]- initial_wealth, breaks=30)
 ```
 5% Value at Risk
-```{r}
+```{r, echo=FALSE}
 temp = sim1[,n_days]- initial_wealth
 quantile(temp,p=0.05)
 ```
@@ -433,7 +438,7 @@ df=df[,-1]
 
 In order to use k-means clustering on the twitter followers a value of k needs to be chosen. The elbow plot below is somewhat ambiguous as to where the elbow is, but a value of 7 was chosen for k.  
 
-```{r}
+```{r, echo=FALSE}
 set.seed(123)
 
 # function to compute total within-cluster sum of square 
@@ -452,13 +457,13 @@ plot(k.values, wss_values,
        xlab="Number of clusters K",
        ylab="Total within-clusters sum of squares")
 ```
-```{r}
+```{r, include=FALSE}
 set.seed(123)
 final <- kmeans(df, 7, nstart = 25)
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 cluster=df %>%
   mutate(Cluster = final$cluster) %>%
   group_by(Cluster) %>%
@@ -503,7 +508,7 @@ To start the analysis of author attribution we created readerPlain, this wraps a
 
 
 
-```{r}
+```{r, include=FALSE}
 rm(list=ls())
 library(tm) 
 library(caret)
@@ -522,7 +527,7 @@ readerPlain = function(fname){
 ```
 
 
-```{r}
+```{r, include=FALSE}
 setwd("./data/ReutersC50/C50train")
 file.list = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
 trainFiles = lapply(file.list, readerPlain) 
@@ -531,13 +536,13 @@ trainFiles = lapply(file.list, readerPlain)
 
 ```
 
-```{r}
+```{r, include=FALSE}
 setwd("./data/ReutersC50/C50test")
 file.list1 = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
 testFiles = lapply(file.list1, readerPlain) 
 
 ```
-```{r}
+```{r, include=FALSE}
 ## once you have documents in a vector, you 
 ## create a text mining 'corpus' with: 
 documents_raw = Corpus(VectorSource(trainFiles))
@@ -561,7 +566,7 @@ tfidf_train = weightTfIdf(DTM_train)
 train = as.matrix(tfidf_train)
 ```
 
-```{r}
+```{r, include=FALSE}
 ## once you have documents in a vector, you 
 ## create a text mining 'corpus' with: 
 documents_raw1 = Corpus(VectorSource(testFiles))
@@ -586,13 +591,13 @@ test = as.matrix(tfidf_test)
 
 ```
 
-```{r}
+```{r, include=FALSE}
 #make train and test dfs 
 train = as.data.frame(train)
 test = as.data.frame(test)
 ```
 
-```{r}
+```{r, include=FALSE}
 #add author id to author columns in test and train. change the column to a factor for classification
 
  for (i in 1:50) {
@@ -607,7 +612,7 @@ train$author = as.factor(train$author)
 test$author = as.factor(test$author)
 ```
 
-```{r}
+```{r,include=FALSE}
 #create train and test matricies.
 
 X_Train = as.matrix(train[,names(train)!='author'])
@@ -615,14 +620,14 @@ Y_Train = as.factor(train$author)
 X_Test = as.matrix(test[,names(test)!='author'])
 Y_Test = test$author
 ```
-```{r}
+```{r,include=FALSE}
 naive.fit = naive_bayes(X_Train,Y_Train)
 
 ```
-```{r}
+```{r, echo=FALSE}
 naive_predict=predict(naive.fit,X_Test,type='class')
 ```
-```{r}
+```{r, echo=FALSE}
 ##Confusion matrix to check accuracy
 xtab = table(naive_predict,Y_Test)
 confusionMatrix(xtab)
@@ -631,14 +636,14 @@ confusionMatrix(xtab)
 
 #Association Rules
 
-```{r}
+```{r,include=FALSE}
 rm(list=ls())
 library(tidyverse)
 library(arules)
 library(arulesViz)
 ```
 
-```{r}
+```{r, echo=FALSE}
 #Read in data as transactions class
 groc = read.transactions(".\\data\\groceries.txt", format="basket", sep= ",")
 summary(groc)
@@ -647,7 +652,7 @@ itemFrequencyPlot(groc, topN = 15)
 ```
 
 The final thresholds we selected were support=.005, confidence=.2, and maxlen=5. These were selected by trying out various combinations of the three and inspecting the results (code not included). We selected our final thresholds due to the reasonable amount of rules produced (873) compared to other combos that produced upwards of 1500 rules. Subsets of 873 rules also produced actionable insights for a grocer. 
-```{r}
+```{r, echo=FALSE}
 rules_three = apriori(groc, parameter=list(support=.005, confidence=.2, maxlen=5))
 summary(rules_three)
 cat("Number of Rules",length(rules_three)) #873 rules
@@ -656,15 +661,15 @@ inspect(subset(rules_three, subset=confidence > 0.5)) #100ish rules
 inspect(subset(rules_three, confidence > 0.3 & lift >3)) #39 rules; root vegetables
 ```
 
-```{r}
+```{r, echo=FALSE}
 plot(rules_three)
 ```
 
-```{r}
+```{r, echo=FALSE}
 plot(head(rules_three, 20, by='lift'), method='graph')
 ```
 
-```{r}
+```{r, echo=FALSE}
 milkrules <- subset(rules_three, rhs %pin% "whole milk")
 inspect(milkrules) #229 rules
 
@@ -677,7 +682,7 @@ inspect(sausagerules) #12 rules - odd rules
 
 As expected, the most prominent rule emerging from the grocery baskets was butter and yogurt -> whole milk with a confidence of 64%. However, in total there were 229 rules pointing to whole milk because it is such a popular grocery item. In comparison, the 12 rules for sausage were quite interesting. Pairings leading to sausage with confidence around 20% included root vegetables and yogurt, other vegetables and shopping bags, and soda and yogurt. These items are pretty unintuitive when it comes to sausage trends. In addition, it was surprising to see that hamburger meat was not largely intertwined in the network. 
 
-```{r}
+```{r, echo=FALSE}
 saveAsGraph(head(rules_three, n = 1000, by = "lift"), file = "groceryrules_three.graphml")
 ```
 
