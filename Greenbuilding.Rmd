@@ -17,6 +17,13 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+## Green Buildings
+
+Real estate investors and developers invest in green buildings, whether they are LEED- or EnergyStar-certified with the hopes of being able to generate additional revenues in rent, or (in cases in which utilities are not reimbursed by tenants) to save enough money in utilities to effectively generate higher profits by reducing utility expense. Although these hopes may be realized in individual cases, there is not enough support in Green Buildings dataset to conclude that investing in a Green Building will typically generate higher rents or utilities savings. In fact, based on some simple analysis, it appears that some green buildings may even generate lower rents than similar non-green buildings. 
+
+The previous analysis was flawed because it looked only at green versus non-green buildings in aggregate. It concluded that green buildings generated higher rents by comparing median price per square foot of green and non-green buildings. This analysis does not look at many other potential hidden variables that could account for the difference in price, other than green vs. non-green. 
+
+The graph below demonstrates that proportionally more green buildings are Class A than non-green buildings. 
 ```{r}
 #loading in the data
 green = read.csv('../data/greenbuildings.csv')
@@ -32,6 +39,7 @@ non_green = subset(green_clean, green_rating == 0)
 
 
 ```
+
 ```{r}
 #Summary of green buildings
 summary(green_only)
@@ -42,6 +50,7 @@ summary(green_only)
 summary(non_green)
 
 ```
+
 ```{r}
 #Further separating into different class buildings for green buildings
 Aclass_green = subset(green_only, class_a == 1)
@@ -89,6 +98,9 @@ The percentage of Class B non-green buildings is ~48.5%.
 The percentage of Class C green buildings is ~1%.
 The percentage of Class C non-green buildings is ~14.5%.
 
+Green buildings could generate higher rents overall not because they are green, but because they are nicer buildings, on average. This analysis suggests that green buildings could generate higher rents on average because they are more likely to be Class A Buildings. 
+
+When the effects of building class and green vs. non-green are separated, the conclusion that green buildings generate higher rents is unsupported. 
 
 ```{r, echo=FALSE}
 green %>%
@@ -104,11 +116,15 @@ summarise(AverageRent = mean(Rent)) %>%
       x="Class", y="Mean Rent ($USD/sq. ft)", fill="Green Rating")
 
 ```
+The above graph demonstrates that when separated by class, only Class C green buildings generate higher rents than their non-green counterparts. This supports the conclusion that the effect captured in the previous report was actually related to having nicer buildings on average in the green population, compared to the non-green population. 
 
-
+A multiple regression provides additional evidence to further separate the effects of Building Class and Green status. Ad demonstrated by the coefficients below, a Class A generates the greatest rent premiums, followed by Class B buildings. Green buildings actually have a negative relationship to price (although the statistical significance is less certain than building class). This would suggest that green buildings typically have lower rents than their non-green peers. 
 
 ```{r}
 reg = lm(Rent~class_a+class_b+green_rating, green )
 summary(reg)
 
 ```
+This still leaves the question of lower utility expense. Based on a little external research, a typical office building 17.3 kilowatt hours per square foot per year. At 2.9 cents per kilowatt hour, this is about 50 cents per square foot per year. Even if there was a 50% savings in electricity expenses, this would not outweigh the approximately two dollar difference in rent for Class A green vs. non-green buildings. Gas expense savings were similarly negligible. 
+
+In conclusion, although there may still be moral and reputational benefits to investing in green properties, there is insufficient evidence to conclude that green buildings will result in better financial investment returns. Instead of investing in green certification, the developer may realize better returns by upgrading the building's class (e.g. from a Class B to a Class A building). 
