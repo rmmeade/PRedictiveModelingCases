@@ -2,94 +2,6 @@
 
 ## By: Rachel Meade, Ian Hatfield, Curtis Krawczyk, LaShay Fontenot
 
-``` r
-rm(list=ls())
-library(mosaic)
-```
-
-    ## Warning: package 'mosaic' was built under R version 3.6.1
-
-    ## Loading required package: dplyr
-
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-    ## Loading required package: lattice
-
-    ## Loading required package: ggformula
-
-    ## Warning: package 'ggformula' was built under R version 3.6.1
-
-    ## Loading required package: ggplot2
-
-    ## Loading required package: ggstance
-
-    ## Warning: package 'ggstance' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'ggstance'
-
-    ## The following objects are masked from 'package:ggplot2':
-    ## 
-    ##     geom_errorbarh, GeomErrorbarh
-
-    ## 
-    ## New to ggformula?  Try the tutorials: 
-    ##  learnr::run_tutorial("introduction", package = "ggformula")
-    ##  learnr::run_tutorial("refining", package = "ggformula")
-
-    ## Loading required package: mosaicData
-
-    ## Warning: package 'mosaicData' was built under R version 3.6.1
-
-    ## Loading required package: Matrix
-
-    ## Registered S3 method overwritten by 'mosaic':
-    ##   method                           from   
-    ##   fortify.SpatialPolygonsDataFrame ggplot2
-
-    ## 
-    ## The 'mosaic' package masks several functions from core packages in order to add 
-    ## additional features.  The original behavior of these functions should not be affected by this.
-    ## 
-    ## Note: If you use the Matrix package, be sure to load it BEFORE loading mosaic.
-
-    ## 
-    ## Attaching package: 'mosaic'
-
-    ## The following object is masked from 'package:Matrix':
-    ## 
-    ##     mean
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     stat
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     count, do, tally
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     binom.test, cor, cor.test, cov, fivenum, IQR, median,
-    ##     prop.test, quantile, sd, t.test, var
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     max, mean, min, prod, range, sample, sum
-
-``` r
-library(dplyr)
-```
-
 ## Green Buildings
 
 Real estate investors and developers invest in green buildings, whether
@@ -115,203 +27,17 @@ vs. non-green.
 The graph below demonstrates that proportionally more green buildings
 are Class A than non-green buildings.
 
-``` r
-#loading in the data
-green = read.csv('./data/greenbuildings.csv')
-summary(green)
-```
+The percentage of Class A green buildings is \~79.8%.
 
-    ##  CS_PropertyID        cluster            size            empl_gr       
-    ##  Min.   :      1   Min.   :   1.0   Min.   :   1624   Min.   :-24.950  
-    ##  1st Qu.: 157452   1st Qu.: 272.0   1st Qu.:  50891   1st Qu.:  1.740  
-    ##  Median : 313253   Median : 476.0   Median : 128838   Median :  1.970  
-    ##  Mean   : 453003   Mean   : 588.6   Mean   : 234638   Mean   :  3.207  
-    ##  3rd Qu.: 441188   3rd Qu.:1044.0   3rd Qu.: 294212   3rd Qu.:  2.380  
-    ##  Max.   :6208103   Max.   :1230.0   Max.   :3781045   Max.   : 67.780  
-    ##                                                       NA's   :74       
-    ##       Rent         leasing_rate       stories            age        
-    ##  Min.   :  2.98   Min.   :  0.00   Min.   :  1.00   Min.   :  0.00  
-    ##  1st Qu.: 19.50   1st Qu.: 77.85   1st Qu.:  4.00   1st Qu.: 23.00  
-    ##  Median : 25.16   Median : 89.53   Median : 10.00   Median : 34.00  
-    ##  Mean   : 28.42   Mean   : 82.61   Mean   : 13.58   Mean   : 47.24  
-    ##  3rd Qu.: 34.18   3rd Qu.: 96.44   3rd Qu.: 19.00   3rd Qu.: 79.00  
-    ##  Max.   :250.00   Max.   :100.00   Max.   :110.00   Max.   :187.00  
-    ##                                                                     
-    ##    renovated         class_a          class_b            LEED         
-    ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000000  
-    ##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000000  
-    ##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0.000000  
-    ##  Mean   :0.3795   Mean   :0.3999   Mean   :0.4595   Mean   :0.006841  
-    ##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0.000000  
-    ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.000000  
-    ##                                                                       
-    ##    Energystar       green_rating          net            amenities     
-    ##  Min.   :0.00000   Min.   :0.00000   Min.   :0.00000   Min.   :0.0000  
-    ##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.0000  
-    ##  Median :0.00000   Median :0.00000   Median :0.00000   Median :1.0000  
-    ##  Mean   :0.08082   Mean   :0.08677   Mean   :0.03471   Mean   :0.5266  
-    ##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:1.0000  
-    ##  Max.   :1.00000   Max.   :1.00000   Max.   :1.00000   Max.   :1.0000  
-    ##                                                                        
-    ##   cd_total_07     hd_total07    total_dd_07   Precipitation  
-    ##  Min.   :  39   Min.   :   0   Min.   :2103   Min.   :10.46  
-    ##  1st Qu.: 684   1st Qu.:1419   1st Qu.:2869   1st Qu.:22.71  
-    ##  Median : 966   Median :2739   Median :4979   Median :23.16  
-    ##  Mean   :1229   Mean   :3432   Mean   :4661   Mean   :31.08  
-    ##  3rd Qu.:1620   3rd Qu.:4796   3rd Qu.:6413   3rd Qu.:43.89  
-    ##  Max.   :5240   Max.   :7200   Max.   :8244   Max.   :58.02  
-    ##                                                              
-    ##    Gas_Costs        Electricity_Costs  cluster_rent  
-    ##  Min.   :0.009487   Min.   :0.01780   Min.   : 9.00  
-    ##  1st Qu.:0.010296   1st Qu.:0.02330   1st Qu.:20.00  
-    ##  Median :0.010296   Median :0.03274   Median :25.14  
-    ##  Mean   :0.011336   Mean   :0.03096   Mean   :27.50  
-    ##  3rd Qu.:0.011816   3rd Qu.:0.03781   3rd Qu.:34.00  
-    ##  Max.   :0.028914   Max.   :0.06280   Max.   :71.44  
-    ## 
+The percentage of Class A non-green buildings is \~37%.
 
-``` r
-#Cleaning low occupancy buildings
-green_clean = subset(green, leasing_rate > 10)
+The percentage of Class B green buildings is \~19.15%.
 
-#Separating data into green/non-green buildings
-green_only = subset(green_clean, green_rating==1)
-non_green = subset(green_clean, green_rating == 0) 
-```
+The percentage of Class B non-green buildings is \~48.5%.
 
-``` r
-#Summary of green buildings
-summary(green_only)
-```
+The percentage of Class C green buildings is \~1%.
 
-    ##  CS_PropertyID        cluster            size            empl_gr       
-    ##  Min.   :   2883   Min.   :   1.0   Min.   :  10560   Min.   :-24.950  
-    ##  1st Qu.: 246763   1st Qu.: 294.8   1st Qu.: 120000   1st Qu.:  1.770  
-    ##  Median : 280379   Median : 489.5   Median : 241199   Median :  2.380  
-    ##  Mean   : 397689   Mean   : 623.4   Mean   : 325965   Mean   :  3.506  
-    ##  3rd Qu.: 409711   3rd Qu.:1047.2   3rd Qu.: 417449   3rd Qu.:  2.962  
-    ##  Max.   :6174162   Max.   :1230.0   Max.   :1721242   Max.   : 67.780  
-    ##                                                       NA's   :6        
-    ##       Rent         leasing_rate       stories           age        
-    ##  Min.   :  8.87   Min.   : 12.39   Min.   : 1.00   Min.   :  0.00  
-    ##  1st Qu.: 21.50   1st Qu.: 85.45   1st Qu.: 5.00   1st Qu.: 18.00  
-    ##  Median : 27.60   Median : 92.92   Median :11.00   Median : 22.00  
-    ##  Mean   : 30.03   Mean   : 89.41   Mean   :15.35   Mean   : 23.88  
-    ##  3rd Qu.: 35.54   3rd Qu.: 97.70   3rd Qu.:21.00   3rd Qu.: 26.00  
-    ##  Max.   :138.07   Max.   :100.00   Max.   :76.00   Max.   :116.00  
-    ##                                                                    
-    ##    renovated         class_a          class_b            LEED        
-    ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.00000  
-    ##  1st Qu.:0.0000   1st Qu.:1.0000   1st Qu.:0.0000   1st Qu.:0.00000  
-    ##  Median :0.0000   Median :1.0000   Median :0.0000   Median :0.00000  
-    ##  Mean   :0.2135   Mean   :0.7982   Mean   :0.1915   Mean   :0.07895  
-    ##  3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.00000  
-    ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.00000  
-    ##                                                                      
-    ##    Energystar      green_rating      net            amenities     
-    ##  Min.   :0.0000   Min.   :1     Min.   :0.00000   Min.   :0.0000  
-    ##  1st Qu.:1.0000   1st Qu.:1     1st Qu.:0.00000   1st Qu.:0.0000  
-    ##  Median :1.0000   Median :1     Median :0.00000   Median :1.0000  
-    ##  Mean   :0.9313   Mean   :1     Mean   :0.05702   Mean   :0.7281  
-    ##  3rd Qu.:1.0000   3rd Qu.:1     3rd Qu.:0.00000   3rd Qu.:1.0000  
-    ##  Max.   :1.0000   Max.   :1     Max.   :1.00000   Max.   :1.0000  
-    ##                                                                   
-    ##   cd_total_07       hd_total07    total_dd_07   Precipitation  
-    ##  Min.   : 130.0   Min.   :   0   Min.   :2103   Min.   :10.46  
-    ##  1st Qu.: 684.0   1st Qu.:1419   1st Qu.:2103   1st Qu.:22.71  
-    ##  Median : 906.5   Median :1670   Median :4416   Median :22.71  
-    ##  Mean   :1423.1   Mean   :2795   Mean   :4218   Mean   :29.20  
-    ##  3rd Qu.:1813.0   3rd Qu.:4347   3rd Qu.:5720   3rd Qu.:40.70  
-    ##  Max.   :5240.0   Max.   :7200   Max.   :8244   Max.   :58.02  
-    ##                                                                
-    ##    Gas_Costs      Electricity_Costs  cluster_rent  
-    ##  Min.   :0.0095   Min.   :0.01780   Min.   : 9.00  
-    ##  1st Qu.:0.0103   1st Qu.:0.02350   1st Qu.:19.80  
-    ##  Median :0.0103   Median :0.03410   Median :25.38  
-    ##  Mean   :0.0111   Mean   :0.03159   Mean   :26.90  
-    ##  3rd Qu.:0.0118   3rd Qu.:0.03780   3rd Qu.:32.31  
-    ##  Max.   :0.0289   Max.   :0.06280   Max.   :71.44  
-    ## 
-
-``` r
-#Summary of non-green buildings
-summary(non_green)
-```
-
-    ##  CS_PropertyID        cluster            size            empl_gr       
-    ##  Min.   :      1   Min.   :   1.0   Min.   :   2378   Min.   :-24.950  
-    ##  1st Qu.: 157050   1st Qu.: 269.0   1st Qu.:  48873   1st Qu.:  1.740  
-    ##  Median : 313254   Median : 477.0   Median : 123250   Median :  1.970  
-    ##  Mean   : 439016   Mean   : 586.8   Mean   : 231007   Mean   :  3.157  
-    ##  3rd Qu.: 441040   3rd Qu.:1044.0   3rd Qu.: 285000   3rd Qu.:  2.380  
-    ##  Max.   :6208103   Max.   :1230.0   Max.   :3781045   Max.   : 67.780  
-    ##                                                       NA's   :67       
-    ##       Rent         leasing_rate       stories            age        
-    ##  Min.   :  2.98   Min.   : 10.68   Min.   :  1.00   Min.   :  0.00  
-    ##  1st Qu.: 19.43   1st Qu.: 78.89   1st Qu.:  4.00   1st Qu.: 24.00  
-    ##  Median : 25.03   Median : 89.65   Median : 10.00   Median : 36.00  
-    ##  Mean   : 28.44   Mean   : 84.44   Mean   : 13.68   Mean   : 49.31  
-    ##  3rd Qu.: 34.18   3rd Qu.: 96.50   3rd Qu.: 20.00   3rd Qu.: 80.00  
-    ##  Max.   :250.00   Max.   :100.00   Max.   :110.00   Max.   :187.00  
-    ##                                                                     
-    ##    renovated         class_a          class_b            LEED  
-    ##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0  
-    ##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0  
-    ##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0  
-    ##  Mean   :0.3979   Mean   :0.3701   Mean   :0.4848   Mean   :0  
-    ##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:0  
-    ##  Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :0  
-    ##                                                                
-    ##    Energystar  green_rating      net            amenities     
-    ##  Min.   :0    Min.   :0     Min.   :0.00000   Min.   :0.0000  
-    ##  1st Qu.:0    1st Qu.:0     1st Qu.:0.00000   1st Qu.:0.0000  
-    ##  Median :0    Median :0     Median :0.00000   Median :1.0000  
-    ##  Mean   :0    Mean   :0     Mean   :0.03345   Mean   :0.5194  
-    ##  3rd Qu.:0    3rd Qu.:0     3rd Qu.:0.00000   3rd Qu.:1.0000  
-    ##  Max.   :0    Max.   :0     Max.   :1.00000   Max.   :1.0000  
-    ##                                                               
-    ##   cd_total_07     hd_total07    total_dd_07   Precipitation  
-    ##  Min.   :  39   Min.   :   0   Min.   :2103   Min.   :10.46  
-    ##  1st Qu.: 684   1st Qu.:1419   1st Qu.:2869   1st Qu.:22.71  
-    ##  Median : 966   Median :2739   Median :4979   Median :23.16  
-    ##  Mean   :1197   Mean   :3503   Mean   :4700   Mean   :31.29  
-    ##  3rd Qu.:1534   3rd Qu.:5042   3rd Qu.:6558   3rd Qu.:43.89  
-    ##  Max.   :5240   Max.   :7200   Max.   :8244   Max.   :58.02  
-    ##                                                              
-    ##    Gas_Costs        Electricity_Costs  cluster_rent  
-    ##  Min.   :0.009487   Min.   :0.01782   Min.   : 9.00  
-    ##  1st Qu.:0.010296   1st Qu.:0.02330   1st Qu.:20.32  
-    ##  Median :0.010296   Median :0.03274   Median :25.20  
-    ##  Mean   :0.011352   Mean   :0.03089   Mean   :27.66  
-    ##  3rd Qu.:0.011816   3rd Qu.:0.03781   3rd Qu.:34.18  
-    ##  Max.   :0.028914   Max.   :0.06278   Max.   :71.44  
-    ## 
-
-``` r
-#Further separating into different class buildings for green buildings
-Aclass_green = subset(green_only, class_a == 1)
-Bclass_green = subset(green_only, class_b == 1)
-Cclass_green = subset(green_only, class_a == 0 & class_b == 0)
-
-#non-green buildings
-Aclass_ngreen = subset(non_green, class_a == 1)
-Bclass_ngreen = subset(non_green, class_b == 1)
-Cclass_ngreen = subset(non_green, class_a == 0 & class_b == 0)
-
-#creating column for class type
-
-
-class_type <- ifelse(green$class_a == 1, 'A', ifelse(green$class_b == 1, 'B', ifelse(green$class_a == 0 & green$class_b == 0, 'C', NA)))
-
-green = cbind(green,class_type)
-```
-
-![](Final_WIP_files/figure-gfm/unnamed-chunk-6-1.png)<!-- --> The
-percentage of Class A green buildings is \~79.8%. The percentage of
-Class A non-green buildings is \~37%. The percentage of Class B green
-buildings is \~19.15%. The percentage of Class B non-green buildings is
-\~48.5%. The percentage of Class C green buildings is \~1%. The
-percentage of Class C non-green buildings is \~14.5%.
+The percentage of Class C non-green buildings is \~14.5%.
 
 Green buildings could generate higher rents overall not because they are
 green, but because they are nicer buildings, on average. This analysis
@@ -322,12 +48,11 @@ When the effects of building class and green vs. non-green are
 separated, the conclusion that green buildings generate higher rents is
 unsupported.
 
-![](Final_WIP_files/figure-gfm/unnamed-chunk-7-1.png)<!-- --> The above
-graph demonstrates that when separated by class, only Class C green
-buildings generate higher rents than their non-green counterparts. This
-supports the conclusion that the effect captured in the previous report
-was actually related to having nicer buildings on average in the green
-population, compared to the non-green population.
+The above graph demonstrates that when separated by class, only Class C
+green buildings generate higher rents than their non-green counterparts.
+This supports the conclusion that the effect captured in the previous
+report was actually related to having nicer buildings on average in the
+green population, compared to the non-green population.
 
 A multiple regression provides additional evidence to further separate
 the effects of Building Class and Green status. As demonstrated by the
@@ -336,32 +61,6 @@ followed by Class B buildings. Green buildings actually have a negative
 relationship to price (although the statistical significance is less
 certain than building class). This would suggest that green buildings
 typically have lower rents than their non-green peers.
-
-``` r
-reg = lm(Rent~class_a+class_b+green_rating, green )
-summary(reg)
-```
-
-    ## 
-    ## Call:
-    ## lm(formula = Rent ~ class_a + class_b + green_rating, data = green)
-    ## 
-    ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -23.536  -8.947  -2.663   5.559 217.464 
-    ## 
-    ## Coefficients:
-    ##              Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)   23.9471     0.4416  54.228  < 2e-16 ***
-    ## class_a        8.5888     0.5233  16.413  < 2e-16 ***
-    ## class_b        2.4936     0.5050   4.938 8.06e-07 ***
-    ## green_rating  -1.2576     0.6079  -2.069   0.0386 *  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ## 
-    ## Residual standard error: 14.71 on 7890 degrees of freedom
-    ## Multiple R-squared:  0.04798,    Adjusted R-squared:  0.04762 
-    ## F-statistic: 132.5 on 3 and 7890 DF,  p-value: < 2.2e-16
 
 This still leaves the question of lower utility expense. Based on a
 little external research, a typical office building utilizes about 17.3
@@ -380,134 +79,6 @@ building’s class (e.g. from a Class B to a Class A building).
 
 \#Fligths at Austin-Bergstrom Airport
 
-``` r
-rm(list=ls())
-library(tidyverse)
-```
-
-    ## Warning: package 'tidyverse' was built under R version 3.6.1
-
-    ## -- Attaching packages --------------------------------------------------------------------------------------------------------- tidyverse 1.2.1 --
-
-    ## v tibble  2.1.3     v purrr   0.3.2
-    ## v tidyr   0.8.3     v stringr 1.4.0
-    ## v readr   1.3.1     v forcats 0.4.0
-
-    ## Warning: package 'readr' was built under R version 3.6.1
-
-    ## Warning: package 'forcats' was built under R version 3.6.1
-
-    ## -- Conflicts ------------------------------------------------------------------------------------------------------------ tidyverse_conflicts() --
-    ## x mosaic::count()            masks dplyr::count()
-    ## x purrr::cross()             masks mosaic::cross()
-    ## x mosaic::do()               masks dplyr::do()
-    ## x tidyr::expand()            masks Matrix::expand()
-    ## x dplyr::filter()            masks stats::filter()
-    ## x ggstance::geom_errorbarh() masks ggplot2::geom_errorbarh()
-    ## x dplyr::lag()               masks stats::lag()
-    ## x mosaic::stat()             masks ggplot2::stat()
-    ## x mosaic::tally()            masks dplyr::tally()
-
-``` r
-library(ggmap)
-```
-
-    ## Warning: package 'ggmap' was built under R version 3.6.1
-
-    ## Google's Terms of Service: https://cloud.google.com/maps-platform/terms/.
-
-    ## Please cite ggmap if you use it! See citation("ggmap") for details.
-
-``` r
-library(lubridate)
-```
-
-    ## Warning: package 'lubridate' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'lubridate'
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     date
-
-``` r
-library(ggplot2)
-library(data.table)
-```
-
-    ## Warning: package 'data.table' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'data.table'
-
-    ## The following objects are masked from 'package:lubridate':
-    ## 
-    ##     hour, isoweek, mday, minute, month, quarter, second, wday,
-    ##     week, yday, year
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     transpose
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     between, first, last
-
-``` r
-library(ggrepel)
-```
-
-    ## Warning: package 'ggrepel' was built under R version 3.6.1
-
-``` r
-library(dplyr)
-library(scales)
-```
-
-    ## Warning: package 'scales' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'scales'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     discard
-
-    ## The following object is masked from 'package:readr':
-    ## 
-    ##     col_factor
-
-    ## The following object is masked from 'package:mosaic':
-    ## 
-    ##     rescale
-
-``` r
-data = read.csv("./data/ABIA.csv")
-codes = read.csv("./data/airport-codes.csv")
-attach(data)
-```
-
-``` r
-#grab important info from codes file
-codes_crop = codes[,10:12]
-codes_crop = codes_crop[,c(1,3)]
-codes_crop = distinct(codes_crop, codes_crop$iata_code,.keep_all=TRUE)
-#merge for destination coords
-data2 = merge(data,codes_crop,by.x=("Dest"),by.y=("iata_code"),all.x=TRUE)
-data2 = data2[,-31]
-names(data2)[30] = "dest_coord"
-#merge for origin coords
-data2 = merge(data2,codes_crop,by.x=("Origin"),by.y=("iata_code"),all.x=TRUE)
-data2 = data2[,-32]
-names(data2)[31] = "origin_coord"
-#split coords into long and lat
-data3 = separate(data2, dest_coord,c("dest_lat","dest_long"),
-                 sep = ",",remove=FALSE)
-data3 = separate(data3, origin_coord,c("origin_lat","origin_long"),
-                 sep = ",",remove=FALSE)
-```
-
 The below plots are created by first subsetting the dataset to focus on
 flights departing from the Austin airport. These destinations are then
 plotted on a map of the US with the size of the marker reflecting the
@@ -515,24 +86,6 @@ amount of flights to that location. Markers are then colored based on
 the average delay time of flights to those locations on a blue/red
 scale. This final plot could be helpful for Austinites that travel
 frequently and are curious about flight patterns for their destination.
-
-``` r
-#Subset data to Austin departures
-aus = data3[which(data3$Origin=="AUS"),]
-
-#How many destinations from aus?
-length(unique(aus$Dest)) #52 different locations
-```
-
-    ## [1] 52
-
-``` r
-#Groupby locations and get count of flights
-grouped = summarize(group_by(aus,Dest,dest_long,dest_lat),count=n())
-grouped$count = as.numeric(grouped$count)
-grouped$dest_long = as.numeric(as.character(grouped$dest_long))
-grouped$dest_lat = as.numeric(as.character(grouped$dest_lat))
-```
 
 ``` r
 #Plot USA map
@@ -672,171 +225,26 @@ necessary libraries, defining the ETFs we will use to build each
 portfolio, and import 5 years of historical returns that we will draw
 from in the simulations.
 
-``` r
-rm(list=ls())
-library(mosaic)
-library(quantmod)
-```
-
-    ## Warning: package 'quantmod' was built under R version 3.6.1
-
-    ## Loading required package: xts
-
-    ## Warning: package 'xts' was built under R version 3.6.1
-
-    ## Loading required package: zoo
-
-    ## Warning: package 'zoo' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'zoo'
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     as.Date, as.Date.numeric
-
-    ## Registered S3 method overwritten by 'xts':
-    ##   method     from
-    ##   as.zoo.xts zoo
-
-    ## 
-    ## Attaching package: 'xts'
-
-    ## The following objects are masked from 'package:data.table':
-    ## 
-    ##     first, last
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     first, last
-
-    ## Loading required package: TTR
-
-    ## Warning: package 'TTR' was built under R version 3.6.1
-
-    ## Registered S3 method overwritten by 'quantmod':
-    ##   method            from
-    ##   as.zoo.data.frame zoo
-
-    ## Version 0.4-0 included new data defaults. See ?getSymbols.
-
-``` r
-library(foreach)
-```
-
-    ## Warning: package 'foreach' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'foreach'
-
-    ## The following objects are masked from 'package:purrr':
-    ## 
-    ##     accumulate, when
-
-``` r
-mystocks = c("EUSA", "VUG", "PGX", "MDIV", "USCI", "SPLV", "XLK", "BND", "KNOW", "SPY")
-myprices = getSymbols(mystocks, from = "2014-08-15")
-```
-
-    ## 'getSymbols' currently uses auto.assign=TRUE by default, but will
-    ## use auto.assign=FALSE in 0.5-0. You will still be able to use
-    ## 'loadSymbols' to automatically load data. getOption("getSymbols.env")
-    ## and getOption("getSymbols.auto.assign") will still be checked for
-    ## alternate defaults.
-    ## 
-    ## This message is shown once per session and may be disabled by setting 
-    ## options("getSymbols.warning4.0"=FALSE). See ?getSymbols for details.
-
-    ## pausing 1 second between requests for more than 5 symbols
-    ## pausing 1 second between requests for more than 5 symbols
-    ## pausing 1 second between requests for more than 5 symbols
-    ## pausing 1 second between requests for more than 5 symbols
-    ## pausing 1 second between requests for more than 5 symbols
-    ## pausing 1 second between requests for more than 5 symbols
-
 Adjust all ETFs and create a new object adding ‘a’ to the end.
-
-``` r
-for(ticker in mystocks) {
-  expr = paste0(ticker, "a = adjustOHLC(", ticker, ")")
-  eval(parse(text=expr))
-}
-```
 
 Combine all the returns in a matrix.
 
-``` r
-all_returns = cbind(    ClCl(EUSAa),
-                     ClCl(VUGa),
-                     ClCl(PGXa),
-                     ClCl(MDIVa),
-                     ClCl(USCIa),
-                     ClCl(SPLVa),
-                     ClCl(XLKa),
-                     ClCl(BNDa),
-                     ClCl(KNOWa),
-                     ClCl(SPYa))
-
-all_returns = as.matrix(na.omit(all_returns))
-```
-
 Compute the returns from the closing prices
-
-``` r
-pairs(all_returns)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-18-1.png)<!-- --> Run the
 Monte Carlo simulations to demonstrate many different possible
 scenarios.
 
-``` r
-initial_wealth = 100000
-sim1 = foreach(i=1:5000, .combine='rbind') %do% {
-  total_wealth = initial_wealth
-  weights = c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1)
-  holdings = weights * total_wealth
-  n_days = 20
-  wealthtracker = rep(0, n_days)
-  for(today in 1:n_days) {
-    return.today = resample(all_returns, 1, orig.ids=FALSE)
-    holdings = holdings + holdings*return.today
-    total_wealth = sum(holdings)
-    wealthtracker[today] = total_wealth
-  }
-  wealthtracker
-}
-```
-
 Histogram of the ending wealth amounts generated by the simulations.
-
-``` r
-hist(sim1[,n_days], 25)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 Profit/loss
 
-``` r
-mean(sim1[,n_days])
-```
-
-    ## [1] 100620.6
-
-``` r
-hist(sim1[,n_days]- initial_wealth, breaks=30)
-```
+    ## [1] 100716.4
 
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-21-1.png)<!-- --> Calculate
 Value at Risk at the 5% level.
 
-``` r
-temp = sim1[,n_days]- initial_wealth
-quantile(temp,p=0.05)
-```
-
     ##        5% 
-    ## -3741.831
+    ## -3848.317
 
 We repeat the above process twice more with different portfolios. Since
 we are using a subset of the same ETFs as the first example, we will
@@ -849,143 +257,42 @@ This portfolio focuses on the Tech Sector (30% weight on XLK -
 Technology Select Secotr SPDR Fund) and drop COmmodity Index Fund (USCI)
 & Bonds (BND).
 
-``` r
-initial_wealth = 100000
-sim1 = foreach(i=1:5000, .combine='rbind') %do% {
-  total_wealth = initial_wealth
-  weights = c(0.1, 0.1, 0.1, 0.1, 0, 0.1, 0.3, 0, 0.1, 0.1)
-  holdings = weights * total_wealth
-  n_days = 20
-  wealthtracker = rep(0, n_days)
-  for(today in 1:n_days) {
-    return.today = resample(all_returns, 1, orig.ids=FALSE)
-    holdings = holdings + holdings*return.today
-    total_wealth = sum(holdings)
-    wealthtracker[today] = total_wealth
-  }
-  wealthtracker
-}
-
-hist(sim1[,n_days], 25)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 Profit/loss
 
-``` r
-mean(sim1[,n_days])
-```
-
-    ## [1] 101200.9
-
-``` r
-hist(sim1[,n_days]- initial_wealth, breaks=30)
-```
+    ## [1] 100982.5
 
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-24-1.png)<!-- --> 5% Value
 at Risk
 
-``` r
-temp = sim1[,n_days]- initial_wealth
-quantile(temp,p=0.05)
-```
-
     ##        5% 
-    ## -4612.013
+    ## -4723.209
 
 Change weights to focus on Bonds, & Commodity Index and drop EUSA, VUG,
 SPY, XLK, and PGX
-
-``` r
-initial_wealth = 100000
-sim1 = foreach(i=1:5000, .combine='rbind') %do% {
-  total_wealth = initial_wealth
-  weights = c(0, 0, 0.1, 0, 0.35, 0.1, 0, 0.35, 0.1, 0)
-  holdings = weights * total_wealth
-  n_days = 20
-  wealthtracker = rep(0, n_days)
-  for(today in 1:n_days) {
-    return.today = resample(all_returns, 1, orig.ids=FALSE)
-    holdings = holdings + holdings*return.today
-    total_wealth = sum(holdings)
-    wealthtracker[today] = total_wealth
-  }
-  wealthtracker
-}
-
-hist(sim1[,n_days], 25)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 Profit/loss
 
-``` r
-mean(sim1[,n_days])
-```
-
-    ## [1] 100209
-
-``` r
-hist(sim1[,n_days]- initial_wealth, breaks=30)
-```
+    ## [1] 100167
 
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-27-1.png)<!-- --> 5% Value
 at Risk
 
-``` r
-temp = sim1[,n_days]- initial_wealth
-quantile(temp,p=0.05)
-```
-
-    ##       5% 
-    ## -2286.04
+    ##        5% 
+    ## -2196.461
 
 Finally, we try to make a poorly diversified portfolio, leaving only
 Commodities, Tech, and Insider Sentiment.
-
-``` r
-initial_wealth = 100000
-sim1 = foreach(i=1:5000, .combine='rbind') %do% {
-  total_wealth = initial_wealth
-  weights = c(0, 0, 0, 0, 0.4, 0, 0.4, 0, 0.2, 0)
-  holdings = weights * total_wealth
-  n_days = 20
-  wealthtracker = rep(0, n_days)
-  for(today in 1:n_days) {
-    return.today = resample(all_returns, 1, orig.ids=FALSE)
-    holdings = holdings + holdings*return.today
-    total_wealth = sum(holdings)
-    wealthtracker[today] = total_wealth
-  }
-  wealthtracker
-}
-
-hist(sim1[,n_days], 25)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 Profit/loss
 
-``` r
-mean(sim1[,n_days])
-```
-
-    ## [1] 100610
-
-``` r
-hist(sim1[,n_days]- initial_wealth, breaks=30)
-```
+    ## [1] 100635.8
 
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-30-1.png)<!-- --> 5% Value
 at Risk
 
-``` r
-temp = sim1[,n_days]- initial_wealth
-quantile(temp,p=0.05)
-```
-
     ##        5% 
-    ## -4849.853
+    ## -4714.665
 
 The first portfolio is the most diversified, which would suggest that it
 would have a better sharpe ratio than some of the other portfolios we
@@ -1045,45 +352,9 @@ In order to use k-means clustering on the twitter followers a value of k
 needs to be chosen. The elbow plot below is somewhat ambiguous as to
 where the elbow is, but a value of 7 was chosen for k.
 
-``` r
-set.seed(123)
-
-# function to compute total within-cluster sum of square 
-wss <- function(k) {
-  kmeans(df, k, nstart = 15 )$tot.withinss
-}
-
-# Compute and plot wss for k = 1 to k = 15
-k.values <- 1:15
-
-# extract wss for 2-15 clusters
-wss_values <- map_dbl(k.values, wss)
-```
-
     ## Warning: did not converge in 10 iterations
 
-``` r
-plot(k.values, wss_values,
-       type="b", pch = 19, frame = FALSE, 
-       xlab="Number of clusters K",
-       ylab="Total within-clusters sum of squares")
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-33-1.png)<!-- -->
-
-``` r
-set.seed(123)
-final <- kmeans(df, 7, nstart = 25)
-```
-
-``` r
-cluster=df %>%
-  mutate(Cluster = final$cluster) %>%
-  group_by(Cluster) %>%
-  summarise_all("mean")
-
-cluster
-```
 
     ## # A tibble: 7 x 37
     ##   Cluster chatter current_events travel photo_sharing uncategorized tv_film
@@ -1172,305 +443,14 @@ from the author columns of the corresponding matrices. There are columns
 in X train that do not appear in X test, these columns were ignored. A
 naive bayes model was then fit using X train and the model was used to
 predict X test. The results were then put into a confusion matrix where
-the accuracy of the model was seen to be 36%.
-
-``` r
-rm(list=ls())
-library(tm) 
-```
-
-    ## Warning: package 'tm' was built under R version 3.6.1
-
-    ## Loading required package: NLP
-
-    ## 
-    ## Attaching package: 'NLP'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     annotate
-
-    ## 
-    ## Attaching package: 'tm'
-
-    ## The following object is masked from 'package:mosaic':
-    ## 
-    ##     inspect
-
-``` r
-library(caret)
-```
-
-    ## Warning: package 'caret' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'caret'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     lift
-
-    ## The following object is masked from 'package:mosaic':
-    ## 
-    ##     dotPlot
-
-``` r
-library(magrittr)
-```
-
-    ## 
-    ## Attaching package: 'magrittr'
-
-    ## The following object is masked from 'package:ggmap':
-    ## 
-    ##     inset
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     set_names
-
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     extract
-
-``` r
-library(slam)
-```
-
-    ## 
-    ## Attaching package: 'slam'
-
-    ## The following object is masked from 'package:data.table':
-    ## 
-    ##     rollup
-
-``` r
-library(proxy)
-```
-
-    ## Warning: package 'proxy' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'proxy'
-
-    ## The following object is masked from 'package:Matrix':
-    ## 
-    ##     as.matrix
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     as.dist, dist
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     as.matrix
-
-``` r
-library(stringr)
-library(randomForest)
-```
-
-    ## Warning: package 'randomForest' was built under R version 3.6.1
-
-    ## randomForest 4.6-14
-
-    ## Type rfNews() to see new features/changes/bug fixes.
-
-    ## 
-    ## Attaching package: 'randomForest'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     margin
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     combine
-
-``` r
-library(naivebayes)
-```
-
-    ## Warning: package 'naivebayes' was built under R version 3.6.1
-
-    ## naivebayes 0.9.6 loaded
-
-    ## 
-    ## Attaching package: 'naivebayes'
-
-    ## The following object is masked from 'package:data.table':
-    ## 
-    ##     tables
-
-``` r
-readerPlain = function(fname){
-  readPlain(elem=list(content=readLines(fname)), 
-            id=fname, language='en') }
-```
-
-``` r
-setwd("./data/ReutersC50/C50train")
-file.list = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
-trainFiles = lapply(file.list, readerPlain) 
-```
-
-``` r
-setwd("./data/ReutersC50/C50test")
-file.list1 = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
-testFiles = lapply(file.list1, readerPlain) 
-```
-
-``` r
-## once you have documents in a vector, you 
-## create a text mining 'corpus' with: 
-documents_raw = Corpus(VectorSource(trainFiles))
-
-## Some pre-processing/tokenization steps.
-## tm_map just maps some function to every document in the corpus
-my_documents = documents_raw
-my_documents = tm_map(my_documents, content_transformer(tolower)) # make everything lowercase
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents, content_transformer(tolower)):
-    ## transformation drops documents
-
-``` r
-my_documents = tm_map(my_documents, content_transformer(removeNumbers)) # remove numbers
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents,
-    ## content_transformer(removeNumbers)): transformation drops documents
-
-``` r
-my_documents = tm_map(my_documents, content_transformer(removePunctuation)) # remove punctuation
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents,
-    ## content_transformer(removePunctuation)): transformation drops documents
-
-``` r
-my_documents = tm_map(my_documents, content_transformer(stripWhitespace)) ## remove excess white-space
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents,
-    ## content_transformer(stripWhitespace)): transformation drops documents
-
-``` r
-## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
-my_documents = tm_map(my_documents, content_transformer(removeWords), stopwords("en"))
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents,
-    ## content_transformer(removeWords), : transformation drops documents
-
-``` r
-## create a doc-term-matrix
-DTM_train = DocumentTermMatrix(my_documents)
-DTM_train = removeSparseTerms(DTM_train, 0.95)
-tfidf_train = weightTfIdf(DTM_train)
-train = as.matrix(tfidf_train)
-```
-
-``` r
-## once you have documents in a vector, you 
-## create a text mining 'corpus' with: 
-documents_raw1 = Corpus(VectorSource(testFiles))
-
-## Some pre-processing/tokenization steps.
-## tm_map just maps some function to every document in the corpus
-my_documents1 = documents_raw1
-my_documents1 = tm_map(my_documents1, content_transformer(tolower)) # make everything lowercase
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents1,
-    ## content_transformer(tolower)): transformation drops documents
-
-``` r
-my_documents1 = tm_map(my_documents1, content_transformer(removeNumbers)) # remove numbers
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents1,
-    ## content_transformer(removeNumbers)): transformation drops documents
-
-``` r
-my_documents1 = tm_map(my_documents1, content_transformer(removePunctuation)) # remove punctuation
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents1,
-    ## content_transformer(removePunctuation)): transformation drops documents
-
-``` r
-my_documents1 = tm_map(my_documents1, content_transformer(stripWhitespace)) ## remove excess white-space
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents1,
-    ## content_transformer(stripWhitespace)): transformation drops documents
-
-``` r
-## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
-my_documents1 = tm_map(my_documents1, content_transformer(removeWords), stopwords("en"))
-```
-
-    ## Warning in tm_map.SimpleCorpus(my_documents1,
-    ## content_transformer(removeWords), : transformation drops documents
-
-``` r
-## create a doc-term-matrix
-DTM_test = DocumentTermMatrix(my_documents1)
-DTM_test = removeSparseTerms(DTM_test, 0.95)
-tfidf_test = weightTfIdf(DTM_test)
-test = as.matrix(tfidf_test)
-```
-
-``` r
-#make train and test dfs 
-train = as.data.frame(train)
-test = as.data.frame(test)
-```
-
-``` r
-#add author id to author columns in test and train. change the column to a factor for classification
-
- for (i in 1:50) {
-      author_start = 50*(i-1) + 1
-      author_last = (50*i)
-      
-      train$author[author_start:author_last] = i
-      test$author[author_start:author_last] = i
-    }
-
-train$author = as.factor(train$author)
-test$author = as.factor(test$author)
-```
-
-``` r
-#create train and test matricies.
-
-X_Train = as.matrix(train[,names(train)!='author'])
-Y_Train = as.factor(train$author)
-X_Test = as.matrix(test[,names(test)!='author'])
-Y_Test = test$author
-```
-
-``` r
-naive.fit = naive_bayes(X_Train,Y_Train)
-```
-
-``` r
-naive_predict=predict(naive.fit,X_Test,type='class')
-```
+the accuracy of the model was seen to be
+    36%.
 
     ## Warning: predict.naive_bayes(): Only 742 feature(s) out of 801 defined in the naive_bayes object "naive.fit" are used for prediction.
 
     ## Warning: predict.naive_bayes(): More features in the newdata are provided
     ## as there are probability tables in the object. Calculation is performed
     ## based on features to be found in the tables.
-
-``` r
-##Confusion matrix to check accuracy
-xtab = table(naive_predict,Y_Test)
-confusionMatrix(xtab)
-```
 
     ## Confusion Matrix and Statistics
     ## 
@@ -1737,56 +717,6 @@ confusionMatrix(xtab)
 
 \#Association Rules
 
-``` r
-rm(list=ls())
-library(tidyverse)
-library(arules)
-```
-
-    ## Warning: package 'arules' was built under R version 3.6.1
-
-    ## 
-    ## Attaching package: 'arules'
-
-    ## The following object is masked from 'package:tm':
-    ## 
-    ##     inspect
-
-    ## The following objects are masked from 'package:mosaic':
-    ## 
-    ##     inspect, lhs, rhs
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     recode
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     abbreviate, write
-
-``` r
-library(arulesViz)
-```
-
-    ## Warning: package 'arulesViz' was built under R version 3.6.1
-
-    ## Loading required package: grid
-
-    ## Registered S3 methods overwritten by 'registry':
-    ##   method               from 
-    ##   print.registry_field proxy
-    ##   print.registry_entry proxy
-
-    ## Registered S3 method overwritten by 'seriation':
-    ##   method         from 
-    ##   reorder.hclust gclus
-
-``` r
-#Read in data as transactions class
-groc = read.transactions(".\\data\\groceries.txt", format="basket", sep= ",")
-summary(groc)
-```
-
     ## transactions as itemMatrix in sparse format with
     ##  9835 rows (elements/itemsets/transactions) and
     ##  169 columns (items) and a density of 0.02609146 
@@ -1813,11 +743,6 @@ summary(groc)
     ## 2 artif. sweetener
     ## 3   baby cosmetics
 
-``` r
-#plot item frequency dist
-itemFrequencyPlot(groc, topN = 15)
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-48-1.png)<!-- -->
 
 The final thresholds we selected were support=.005, confidence=.2, and
@@ -1825,12 +750,7 @@ maxlen=5. These were selected by trying out various combinations of the
 three and inspecting the results (code not included). We selected our
 final thresholds due to the reasonable amount of rules produced (873)
 compared to other combos that produced upwards of 1500 rules. Subsets of
-873 rules also produced actionable insights for a
-grocer.
-
-``` r
-rules_three = apriori(groc, parameter=list(support=.005, confidence=.2, maxlen=5))
-```
+873 rules also produced actionable insights for a grocer.
 
     ## Apriori
     ## 
@@ -1854,10 +774,6 @@ rules_three = apriori(groc, parameter=list(support=.005, confidence=.2, maxlen=5
     ## writing ... [873 rule(s)] done [0.00s].
     ## creating S4 object  ... done [0.00s].
 
-``` r
-summary(rules_three)
-```
-
     ## set of 873 rules
     ## 
     ## rule length distribution (lhs + rhs):sizes
@@ -1880,15 +796,7 @@ summary(rules_three)
     ##  data ntransactions support confidence
     ##  groc          9835   0.005        0.2
 
-``` r
-cat("Number of Rules",length(rules_three)) #873 rules
-```
-
     ## Number of Rules 873
-
-``` r
-inspect(subset(rules_three, subset=lift > 3)) #65 rules; good variety
-```
 
     ##      lhs                        rhs                         support confidence     lift count
     ## [1]  {herbs}                 => {root vegetables}       0.007015760  0.4312500 3.956477    69
@@ -2038,10 +946,6 @@ inspect(subset(rules_three, subset=lift > 3)) #65 rules; good variety
     ## [65] {other vegetables,                                                                      
     ##       rolls/buns,                                                                            
     ##       whole milk}            => {root vegetables}       0.006202339  0.3465909 3.179778    61
-
-``` r
-inspect(subset(rules_three, subset=confidence > 0.5)) #100ish rules
-```
 
     ##       lhs                           rhs                    support confidence     lift count
     ## [1]   {baking powder}            => {whole milk}       0.009252669  0.5229885 2.046793    91
@@ -2291,10 +1195,6 @@ inspect(subset(rules_three, subset=confidence > 0.5)) #100ish rules
     ##        rolls/buns,                                                                          
     ##        yogurt}                   => {whole milk}       0.005998983  0.5221239 2.043410    59
 
-``` r
-inspect(subset(rules_three, confidence > 0.3 & lift >3)) #39 rules; root vegetables
-```
-
     ##      lhs                        rhs                    support confidence     lift count
     ## [1]  {herbs}                 => {root vegetables}  0.007015760  0.4312500 3.956477    69
     ## [2]  {beef}                  => {root vegetables}  0.017386884  0.3313953 3.040367   171
@@ -2388,24 +1288,11 @@ inspect(subset(rules_three, confidence > 0.3 & lift >3)) #39 rules; root vegetab
     ##       rolls/buns,                                                                       
     ##       whole milk}            => {root vegetables}  0.006202339  0.3465909 3.179778    61
 
-``` r
-plot(rules_three)
-```
-
     ## To reduce overplotting, jitter is added! Use jitter = 0 to prevent jitter.
 
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-50-1.png)<!-- -->
 
-``` r
-plot(head(rules_three, 20, by='lift'), method='graph')
-```
-
 ![](Final_WIP_files/figure-gfm/unnamed-chunk-51-1.png)<!-- -->
-
-``` r
-milkrules <- subset(rules_three, rhs %pin% "whole milk")
-inspect(milkrules) #229 rules
-```
 
     ##       lhs                           rhs              support confidence      lift count
     ## [1]   {}                         => {whole milk} 0.255516014  0.2555160 1.0000000  2513
@@ -2809,11 +1696,6 @@ inspect(milkrules) #229 rules
     ##        rolls/buns,                                                                     
     ##        yogurt}                   => {whole milk} 0.005998983  0.5221239 2.0434097    59
 
-``` r
-tropfruitrules <- subset(rules_three, rhs %pin% "tropical fruit")
-inspect(tropfruitrules) #52 rules
-```
-
     ##      lhs                        rhs                  support confidence     lift count
     ## [1]  {grapes}                => {tropical fruit} 0.006100661  0.2727273 2.599101    60
     ## [2]  {ham}                   => {tropical fruit} 0.005388917  0.2070312 1.973016    53
@@ -2914,11 +1796,6 @@ inspect(tropfruitrules) #52 rules
     ##       whole milk,                                                                     
     ##       yogurt}                => {tropical fruit} 0.007625826  0.3424658 3.263712    75
 
-``` r
-sausagerules <- subset(rules_three, rhs %pin% "sausage")
-inspect(sausagerules) #12 rules - odd rules
-```
-
     ##      lhs                                 rhs       support     confidence
     ## [1]  {meat}                           => {sausage} 0.005287239 0.2047244 
     ## [2]  {hard cheese}                    => {sausage} 0.005185562 0.2116183 
@@ -2954,12 +1831,7 @@ quite interesting. Pairings leading to sausage with confidence around
 20% included root vegetables and yogurt, other vegetables and shopping
 bags, and soda and yogurt. These items are pretty unintuitive when it
 comes to sausage trends. In addition, it was surprising to see that
-hamburger meat was not largely intertwined in the
-network.
-
-``` r
-saveAsGraph(head(rules_three, n = 1000, by = "lift"), file = "groceryrules_three.graphml")
-```
+hamburger meat was not largely intertwined in the network.
 
 The graph output from gephi shows the network of grocery items with
 nodes with degree less than 3 filtered out. The nodes and edges are
