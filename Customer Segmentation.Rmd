@@ -1,0 +1,81 @@
+---
+title: "Market Segmentation"
+output: github_document
+---
+```{r}
+rm(list=ls())
+df <- read.csv(file="C:\\Users\\ckraw\\OneDrive\\Desktop\\social_marketing.csv", header=TRUE, sep=",")
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(factoextra)
+df=df[,-1]
+```
+
+In order to use k-means clustering on the twitter followers a value of k needs to be chosen. The elbow plot below is somewhat ambiguous as to where the elbow is, but a value of 7 was chosen for k.  
+
+```{r}
+set.seed(123)
+
+# function to compute total within-cluster sum of square 
+wss <- function(k) {
+  kmeans(df, k, nstart = 15 )$tot.withinss
+}
+
+# Compute and plot wss for k = 1 to k = 15
+k.values <- 1:15
+
+# extract wss for 2-15 clusters
+wss_values <- map_dbl(k.values, wss)
+
+plot(k.values, wss_values,
+       type="b", pch = 19, frame = FALSE, 
+       xlab="Number of clusters K",
+       ylab="Total within-clusters sum of squares")
+```
+```{r}
+set.seed(123)
+final <- kmeans(df, 7, nstart = 25)
+```
+
+
+```{r}
+cluster=df %>%
+  mutate(Cluster = final$cluster) %>%
+  group_by(Cluster) %>%
+  summarise_all("mean")
+
+cluster
+```
+
+__Below we will examine the 7 customer segments that were identified using k-means clustering:__  
+
+__Customer segment 1, Politics:__  
+Looking at the mean values of customer segment 1 the categories that stand out are Travel, Politics, and News. These categories depict a customer base of individuals who follow world events and travel. 
+
+
+__Customer segment 2, Fashion:__  
+Looking at the mean values of customer segment 2 the categories that stand out are Photo Sharing, Music, Cooking, Beauty, and Fashion. These categories depict a customer base of individuals interested in fashion/beauty.
+
+
+__Customer segment 3, Family:__  
+Looking at the mean values of customer segment 3 the categories that stand out are Sports Fandom, Food, Religion, Family and Parenting. These categories depict a customer base of parents and family oriented individuals.
+
+
+__Customer segment 4, Health Conscious:__  
+Looking at the mean values of customer segment 4 the categories that stand out are Food, Health, Cooking, Outdoors, and Fitness. These categories depict a customer base of health conscious individuals.  
+
+
+__Customer segment 5, College Students/Young Adults:__  
+Looking at the mean values of customer segment 5 the categories that stand out are tv/Film, online gaming, College/Uni, and Sports Playing. These categories depict a customer base of college students/young adults.
+
+
+__Customer segment 6, N/A:__  
+Looking at the mean values of customer segment 6 no categories standout. This is a very uninterpretable customer segment and it is possible that this segment is a collection of customers from many segments. For every value of K, there was an uninterpretable segment.  
+
+
+
+__Customer segment 7, Pop Culture:__  
+Looking at the mean values of customer segment 7 the categories that stand out are Chatter, Current Events, Photo Sharing, and Shopping. These categories depict a customer base of pop culture influenced individuals.
+
+
