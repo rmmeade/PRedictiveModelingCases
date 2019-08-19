@@ -189,7 +189,7 @@ grouped$dest_long = as.numeric(as.character(grouped$dest_long))
 grouped$dest_lat = as.numeric(as.character(grouped$dest_lat))
 ```
 
-```{r, results= 'hide'}
+```{r, fig.show='hide'}
 #Plot USA map
 usa_bb = c(-124.848974, 24.396308, -66.885444, 49.384358)
 usa_map = ggmap(get_stamenmap(bbox=usa_bb, scale=2, zoom=5,
@@ -206,7 +206,7 @@ usa_map +
 ```
 ![](Rplot map of aus flights.png)<!-- -->
 
-```{r, results = 'hide'}
+```{r, fig.show='hide'}
 #get delays
 grouped2 = summarize(group_by(aus,Dest,dest_long,dest_lat), count= n(),
                      delay = mean(ArrDelay, na.rm = T))
@@ -686,5 +686,6 @@ saveAsGraph(head(rules_three, n = 1000, by = "lift"), file = "groceryrules_three
 
 The graph output from gephi shows the network of grocery items with nodes with degree less than 3 filtered out. The nodes and edges are partitioned (and colored) by confidence.
 
-See Grocery_colorlabel.png in repository.
+![](Grocery_colorlabel.png)<!-- -->
+
 
