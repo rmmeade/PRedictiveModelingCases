@@ -88,7 +88,7 @@ rel_freq <- ggplot(green, aes(class_type, group = green_rating)) +
           caption="Source: greenbuilding data set in R") +
           facet_grid(~green_rating, labeller = label_both)
   
-rel_freq
+print(rel_freq)
 
 ```
 The percentage of Class A green buildings is ~79.8%.
