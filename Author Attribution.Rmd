@@ -1,0 +1,132 @@
+---
+title: "Author Attribution"
+output: github_document
+---
+
+To start the analysis of author attributoin we created readerPlain, this wraps another function around readPlain to read plain text documents in English. Using readerPlain, the train .txt files and test .txt files are read in and stored in corresponding large lists. Making the large lists vectors, two seperate corpus' are made, one for train and one for test. Next is pre-processing, the pre-processing/tokenaztion steps are as follows, make everything lower case, remove numbers, remove puncuation, remove excess white-space, and remove stop words, 'en'. Having processed both corpus', document term matricies were created and words that appeared in <90% of documents were removed. Using the DTMs, TFIDF matricies were created and saved as train and test. The TFIDF matricies were converted to data frames and an empty author column was created, the author column was then populatedy using a for loop that assigned a unique author id to the each document. The author columns were then changed to be type 'factor'. At this point, the pre-model processing has been completed and we now will prepare the data for a naive bayes model. A X train matrix and X test matrix were created using all predictors from the correpsonding matricies and a y train and Y test list were created from the author columns of the corresponding matricies. There are columns in X train that do not appear in X test, these columns were ignored. A naive bayes model was then fit using X train and the model was used to predict X test. The results were then put into a confusion matrix where the accuracy of the model was seen to be 36%.
+
+```{r setup, include=FALSE}
+rm(list=ls())
+options(warn=-1)
+library(tm) 
+library(caret)
+library(magrittr)
+library(slam)
+library(naivebayes)
+library(logisticPCA)
+library(ggplot2)
+
+readerPlain = function(fname){
+  readPlain(elem=list(content=readLines(fname)), 
+            id=fname, language='en') }
+
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50train")
+```
+
+
+```{r}
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50train")
+file.list = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
+trainFiles = lapply(file.list, readerPlain) 
+```
+
+```{r}
+setwd("C:/Users/ckraw/OneDrive/Desktop/C50test")
+file.list1 = dir(path = ".", pattern = "\\.txt$", full.names = TRUE, recursive = TRUE)
+testFiles = lapply(file.list1, readerPlain) 
+
+```
+```{r}
+## once you have documents in a vector, you 
+## create a text mining 'corpus' with: 
+documents_raw = Corpus(VectorSource(trainFiles))
+
+## Some pre-processing/tokenization steps.
+## tm_map just maps some function to every document in the corpus
+my_documents = documents_raw
+my_documents = tm_map(my_documents, content_transformer(tolower)) # make everything lowercase
+my_documents = tm_map(my_documents, content_transformer(removeNumbers)) # remove numbers
+my_documents = tm_map(my_documents, content_transformer(removePunctuation)) # remove punctuation
+my_documents = tm_map(my_documents, content_transformer(stripWhitespace)) ## remove excess white-space
+
+## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
+my_documents = tm_map(my_documents, content_transformer(removeWords), stopwords("en"))
+
+
+## create a doc-term-matrix
+DTM_train = DocumentTermMatrix(my_documents)
+DTM_train = removeSparseTerms(DTM_train, 0.9)
+tfidf_train = weightTfIdf(DTM_train)
+train = as.matrix(tfidf_train)
+```
+
+```{r}
+## once you have documents in a vector, you 
+## create a text mining 'corpus' with: 
+documents_raw1 = Corpus(VectorSource(testFiles))
+
+## Some pre-processing/tokenization steps.
+## tm_map just maps some function to every document in the corpus
+my_documents1 = documents_raw1
+my_documents1 = tm_map(my_documents1, content_transformer(tolower)) # make everything lowercase
+my_documents1 = tm_map(my_documents1, content_transformer(removeNumbers)) # remove numbers
+my_documents1 = tm_map(my_documents1, content_transformer(removePunctuation)) # remove punctuation
+my_documents1 = tm_map(my_documents1, content_transformer(stripWhitespace)) ## remove excess white-space
+
+## Remove stopwords.  Always be careful with this: one person's trash is another one's treasure.
+my_documents1 = tm_map(my_documents1, content_transformer(removeWords), stopwords("en"))
+
+
+## create a doc-term-matrix
+DTM_test = DocumentTermMatrix(my_documents1)
+DTM_test = removeSparseTerms(DTM_test, 0.9)
+tfidf_test = weightTfIdf(DTM_test)
+test = as.matrix(tfidf_test)
+
+```
+
+
+```{r}
+#make train and test dfs 
+train = as.data.frame(train)
+test = as.data.frame(test)
+```
+
+```{r}
+#add author id to author columns in test and train. change the column to a factor for classification
+
+ for (i in 1:50) {
+      author_start = 50*(i-1) + 1
+      author_last = (50*i)
+      
+      train$author[author_start:author_last] = i
+      test$author[author_start:author_last] = i
+    }
+
+train$author = as.factor(train$author)
+test$author = as.factor(test$author)
+```
+
+```{r}
+#create train and test matricies.
+
+X_Train = as.matrix(train[,names(train)!='author'])
+Y_Train = as.factor(train$author)
+X_Test = as.matrix(test[,names(test)!='author'])
+Y_Test = test$author
+
+```
+```{r}
+naive.fit = naive_bayes(X_Train,Y_Train)
+
+```
+```{r}
+naive_predict=predict(naive.fit,X_Test,type='class')
+```
+```{r}
+##Confusion matrix to check accuracy
+xtab = table(naive_predict,Y_Test)
+confusionMatrix(xtab)
+```
+
+
